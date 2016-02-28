@@ -1,6 +1,6 @@
 #OK Tumblebot
-## Your tweets are shit. Follow me to the graveyard
-* Now, let's go find some boring tweets *
+#### Your tweets are shit. Follow me to the graveyard.
+_Now, let's go find some boring tweets_
 
 
 
