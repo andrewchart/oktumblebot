@@ -61,7 +61,11 @@ class OAuthTwitterAPI
 		
 		
 		//Add the request body to array for signing if necessary
-		if(!is_null($fields)) {
+		if(is_array($fields)) {
+			$params_for_signing = array_merge($params_for_signing, $fields);
+		}
+		
+		elseif (!is_null($fields)) {
 			parse_str($fields, $fields_array);
 			$params_for_signing = array_merge($params_for_signing, $fields_array);
 		} 
@@ -75,15 +79,8 @@ class OAuthTwitterAPI
 		$param_str = "";
 		$i = 0;
 		$len = count($params_for_signing); 
-		foreach($params_for_signing as $key=>$val){
-			
-			$i++;
-			$param_str .= $key . "=" . urlencode($val);
-	
-			if($i < $len) $param_str .= "&";
-			
-		}
-		
+		$param_str = http_build_query($params_for_signing, null, ini_get('arg_separator.output'), PHP_QUERY_RFC3986);
+
 		
 		// Create the signature base string
 		$signature_base = $request_type 
@@ -91,8 +88,8 @@ class OAuthTwitterAPI
 			. urlencode($this->endpoint_base($endpoint))
 			. "&"
 			. urlencode($param_str);
-		
-		
+				
+				
 		// Create the signing key
 		$signing_key = urlencode(CONSUMER_SECRET) . "&" . urlencode(ACCESS_TOKEN_SECRET);
 	
@@ -161,12 +158,24 @@ class OAuthTwitterAPI
 
 	
 	/* Main API Request function */
-	private function make_request($endpoint, $type, $fields = null, $file = null) {
+	private function make_request($endpoint, $type, $fields, $file) {
 		
 		// Build the full OAuth Header
 		$oauth_header = $this->build_oauth_header($endpoint, $type, $fields);
 		
-		/* cURL the endpoint */
+		//Parse the fields 
+		if(is_array($fields)) {
+			$fields_to_pass = http_build_query($fields);
+		} else {
+			$fields_to_pass = $fields;
+		}
+		
+		//Add GET parameters to endpoint
+		if($type == "GET") {
+			$endpoint .= "?" . $fields_to_pass; 
+		}
+		
+		// cURL the endpoint
 		$headers = array(
 		    "Content-Type: application/x-www-form-urlencoded;charset=UTF-8",
 		    "User-Agent: OK Tumblebot v1.0",
@@ -178,29 +187,33 @@ class OAuthTwitterAPI
 		curl_setopt($ch, CURLOPT_URL, $endpoint);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		
-		if($type == "POST") curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-		
-		if(!is_null($file)) {
-			curl_setopt($ch, CURLOPT_FILE, $file);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		//Add POST fields to headers
+		if($type == "POST") {
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_to_pass);
 		}
 		
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		
+		/*if(!is_null($file)) {
+			curl_setopt($ch, CURLOPT_FILE, $file);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		}*/
 		
 		$result = curl_exec($ch);
 		curl_close($ch);
 		
-		//return json_decode($result);
+		return json_decode($result);
 			
 	}
 
 	
 	/* Public access to make requests */
 	public function post_request($endpoint, $postfields = null, $file = null) {
-		$this->make_request($endpoint, "POST", $postfields, $file);
+		return $this->make_request($endpoint, "POST", $postfields, $file);
 	}
 	
-	public function get_request($endpoint, $file = null) {
-		return $this->make_request($endpoint, "GET", null, $file);
+	public function get_request($endpoint, $fields = null, $file = null) {
+		return $this->make_request($endpoint, "GET", $fields, $file);
 	}
 	
 }
@@ -245,6 +258,7 @@ class TwitterSimpleAuth
 		return $response->access_token;
        
     }
+    
 }
 
 

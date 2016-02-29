@@ -21,8 +21,10 @@ $tw = new OAuthTwitterAPI();
 
 //Execute the request
 $endpoint = "https://stream.twitter.com/1.1/statuses/sample.json";
-$postfields = "language=en";
-$response = $tw->post_request($endpoint, $postfields);
+$fields = array(
+	'language' => 'en'
+);
+$response = $tw->post_request($endpoint, $fields);
 
 
 

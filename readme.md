@@ -7,24 +7,30 @@ _Now, let's go find some boring tweets_
 1. Randomly gather public tweets and select a small number to pick on
 	* Look for tweets a few days old..
 	* That have no engagement (likes, retweets or replies)..
-	* We're insulting in English, so seek tweets in English
+	* We're being rude in English, so let's be fair and seek English language tweets
 	* Take reasonable steps to ensure users have human feelings
 	* Pick on people who have good followings!
 	* Harvest tweets in a database
 
 2. Somewhat randomly decide what to do with the tweet
-	* Like it
-	* Retweet it
-	* Retweet it with a sarky comment
-	* Delete the tweet from the database
+	* Like it								// A tumbleweed liked your tweet
+	* Retweet it							// A tumbleweed retweeted your tweet
+	* Retweet it with a sarky comment		// @YOU _BOoOoOORING!_
+	* Follow the user						// A tumbleweed followed you
+	* (Any combination of the above)
 	
-3. Set up random-interval cron jobs to process the tweet queue
-	* Check that the tweets still have no engagement at point of 
+3. Add the tweet to a database table (processing queue)
 	
-4. Track users who persistently post tweets with no engagement
+4. Ocassionally tweet an interim botty comment
+	* Anything that a tumbleweed might say (in the absence of anybody to listen to it)
+	
+5. Set up random-interval cron jobs to process the tweet queue
+	* Check that the tweets still have no engagement at point of insult
+	
+6. Track users who persistently post tweets with no engagement
 	* Periodically remind them that no-one is listening
 
-5. Enable manual management and input of tweet IDs
+7. Enable manual management and input of tweet IDs
 	* For picking on friends and celebrities
 
 
