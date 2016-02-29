@@ -44,6 +44,9 @@ _Now, let's go find some boring tweets_
 
 
 
+__29/2/2016__
+
+Created Tumblebot class with core tumblebot action functions
 
 
 __28/2/2016__
