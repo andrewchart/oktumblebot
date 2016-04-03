@@ -158,12 +158,12 @@ class OAuthTwitterAPI
 
 	
 	/* Main API Request function */
-	private function make_request($endpoint, $type, $fields, $file) {
+	private function make_request($endpoint, $type, $fields, $streamtime = false) {
 		
-		// Build the full OAuth Header
+		// Build the OAuth Header
 		$oauth_header = $this->build_oauth_header($endpoint, $type, $fields);
 		
-		//Parse the fields 
+		//Parse the parameters (fields)
 		if(is_array($fields)) {
 			$fields_to_pass = http_build_query($fields);
 		} else {
@@ -175,45 +175,56 @@ class OAuthTwitterAPI
 			$endpoint .= "?" . $fields_to_pass; 
 		}
 		
-		// cURL the endpoint
+		//Prepare Headers
 		$headers = array(
 		    "Content-Type: application/x-www-form-urlencoded;charset=UTF-8",
 		    "User-Agent: OK Tumblebot v1.0",
 		    //"Accept-Encoding: gzip",
 		    "Authorization: " . $oauth_header
 		); 
-		  		        
+	        
+		// cURL the endpoint
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $endpoint);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		
 		//Add POST fields to headers
 		if($type == "POST") {
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_to_pass);
 		}
 		
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		
-		/*if(!is_null($file)) {
+		//Additional options for stream requests
+		if($streamtime) {
+			$file = fopen("stream.json","w");
+			curl_setopt($ch, CURLOPT_TIMEOUT, $streamtime);
 			curl_setopt($ch, CURLOPT_FILE, $file);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		}*/
+			//curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+			fwrite($file,curl_exec($ch));
+			fclose($file);
+			return;
+		}
 		
+		
+		//Execute, close handler & return
 		$result = curl_exec($ch);
-		curl_close($ch);
-		
+		curl_close($ch);		
 		return json_decode($result);
 			
 	}
 
 	
 	/* Public access to make requests */
-	public function post_request($endpoint, $postfields = null, $file = null) {
-		return $this->make_request($endpoint, "POST", $postfields, $file);
+	public function stream_request($endpoint, $type, $fields, $streamtime) {
+		return $this->make_request($endpoint, "POST", $fields, $streamtime);
 	}
 	
-	public function get_request($endpoint, $fields = null, $file = null) {
-		return $this->make_request($endpoint, "GET", $fields, $file);
+	public function post_request($endpoint, $fields = null) {
+		return $this->make_request($endpoint, "POST", $fields);
+	}
+	
+	public function get_request($endpoint, $fields = null) {
+		return $this->make_request($endpoint, "GET", $fields);
 	}
 	
 }

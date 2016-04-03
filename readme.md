@@ -8,9 +8,9 @@ _Now, let's go find some boring tweets_
 	* Look for tweets a few days old..
 	* That have no engagement (likes, retweets or replies)..
 	* We're being rude in English, so let's be fair and seek English language tweets
-	* Take reasonable steps to ensure users have human feelings
-	* Pick on people who have good followings!
-	* Harvest tweets in a database
+	* TODO: Take reasonable steps to ensure users have human feelings
+	* TODO: Pick on people who have good followings!
+	* Harvest tweet ids in a database
 
 2. Somewhat randomly decide what to do with the tweet
 	* Like it								// A tumbleweed liked your tweet
@@ -34,14 +34,24 @@ _Now, let's go find some boring tweets_
 	* For picking on friends and celebrities
 
 
+__2/4/2016__
+
+Tweets cleansing and writing IDs to database
 
 
+__8/3/2016__
+
+Bones of sensitive words function
 
 
+__6/3/2016__
+
+Began writing tweet cleansing process to filter useful tweets
 
 
+__2/3/2016__
 
-
+Read tweets for x seconds from the stream to a json file
 
 
 __29/2/2016__
